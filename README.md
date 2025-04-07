@@ -1,2 +1,0 @@
-# blublu-site
-test one
