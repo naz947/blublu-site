@@ -2,113 +2,146 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>BluBlu Sketch</title>
-  <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Valentine's Prompt</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    body {
-      background: #f9f9f9;
-      font-family: 'Gloria Hallelujah', cursive;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      overflow: hidden;
+    :root {
+      --bg-start: #fce4ec;
+      --bg-end: #f8bbd0;
+      --card: #ffffff;
+      --text: #3a3a3a;
+      --accent: #e91e63;
+      --accent-dark: #c2185b;
     }
 
-    .container {
-      border: 3px solid #000;
-      border-radius: 20px;
-      padding: 60px 40px;
-      width: 400px;
-      height: 400px;
-      transform: rotate(1deg);
-      box-shadow: 6px 6px 0 #000;
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+      color: var(--text);
+    }
+
+    .card {
+      width: min(90vw, 420px);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 32px 28px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.15);
       text-align: center;
       position: relative;
-      overflow: hidden;
     }
 
     h1 {
-      font-size: 3em;
-      margin-bottom: 60px;
-      letter-spacing: 5px;
-      transform: rotate(-3deg);
-      cursor: pointer;
+      font-size: 1.8rem;
+      margin: 0 0 24px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      position: relative;
+      height: 52px;
     }
 
     button {
-      font-family: 'Gloria Hallelujah', cursive;
-      font-size: 1.2em;
-      padding: 12px 30px;
-      border: 2px solid #000;
-      border-radius: 8px;
-      background: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 28px;
+      font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
-      box-shadow: 2px 2px 0 #000;
-      position: absolute;
-      top: 300px; /* Initial position */
-      left: 120px;
-      transition: top 0.2s ease, left 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .blossom {
-      position: absolute;
-      font-size: 24px;
-      animation: fall 3s linear forwards;
-      pointer-events: none;
+    button:focus-visible {
+      outline: 3px solid rgba(233, 30, 99, 0.4);
+      outline-offset: 2px;
     }
 
-    @keyframes fall {
-      0% {
-        opacity: 1;
-        transform: translateY(0) rotate(0deg);
-      }
-      100% {
-        opacity: 0;
-        transform: translateY(400px) rotate(360deg);
-      }
+    #yesBtn {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 8px 18px rgba(233, 30, 99, 0.35);
+    }
+
+    #yesBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 20px rgba(233, 30, 99, 0.4);
+    }
+
+    #noBtn {
+      background: #f3f3f3;
+      color: #6b6b6b;
+      position: absolute;
+      left: 50%;
+      transform: translateX(40px);
+      transition: left 0.2s ease, top 0.2s ease;
+    }
+
+    #noBtn:hover {
+      transform: translateX(40px) scale(1.02);
+    }
+
+    .thanks {
+      margin-top: 24px;
+      padding: 16px 20px;
+      border-radius: 16px;
+      background: #fff0f6;
+      color: var(--accent-dark);
+      font-weight: 600;
+      box-shadow: inset 0 0 0 2px rgba(233, 30, 99, 0.2);
+      display: none;
+    }
+
+    .thanks.show {
+      display: block;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1 id="title">BluBlu</h1>
-    <button id="magicBtn">click&nbsp;&nbsp;me</button>
+  <div class="card">
+    <h1>Will you be my valentine?</h1>
+    <div class="buttons" id="buttonArea">
+      <button id="yesBtn">Yes</button>
+      <button id="noBtn">No</button>
+    </div>
+    <div class="thanks" id="thanksBox">Thank you! 💖</div>
   </div>
 
   <script>
-    const button = document.getElementById('magicBtn');
-    const container = document.querySelector('.container');
-    const title = document.getElementById('title');
+    const noBtn = document.getElementById('noBtn');
+    const buttonArea = document.getElementById('buttonArea');
+    const yesBtn = document.getElementById('yesBtn');
+    const thanksBox = document.getElementById('thanksBox');
 
-    // Move button randomly on hover
-    button.addEventListener('mouseenter', () => {
-      const maxX = container.clientWidth - button.offsetWidth - 20;
-      const maxY = container.clientHeight - button.offsetHeight - 20;
-      const randX = Math.random() * maxX;
-      const randY = Math.random() * maxY;
+    const moveNoButton = () => {
+      const areaRect = buttonArea.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+      const maxLeft = areaRect.width - btnRect.width;
+      const maxTop = areaRect.height - btnRect.height;
 
-      button.style.left = `${randX}px`;
-      button.style.top = `${randY}px`;
-    });
+      const randLeft = Math.random() * maxLeft;
+      const randTop = Math.random() * maxTop;
 
-    // Show cherry blossoms on title hover
-    title.addEventListener('mouseenter', () => {
-      for (let i = 0; i < 10; i++) {
-        const blossom = document.createElement('div');
-        blossom.className = 'blossom';
-        blossom.textContent = '🌸';
-        blossom.style.left = Math.random() * container.clientWidth + 'px';
-        blossom.style.top = '-30px';
-        blossom.style.animationDuration = (2 + Math.random() * 2) + 's';
-        container.appendChild(blossom);
+      noBtn.style.left = `${randLeft}px`;
+      noBtn.style.top = `${randTop}px`;
+    };
 
-        // Remove blossom after animation
-        setTimeout(() => {
-          blossom.remove();
-        }, 4000);
-      }
+    noBtn.addEventListener('mouseenter', moveNoButton);
+    noBtn.addEventListener('click', moveNoButton);
+
+    yesBtn.addEventListener('click', () => {
+      thanksBox.classList.add('show');
     });
   </script>
 </body>
